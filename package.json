@@ -1,0 +1,37 @@
+{
+  "name": "goorm-react-note",
+  "version": "1.0.0",
+  "description": "![note.gif](img/note.gif) 위의 gif와 완전 동일하게 만들기 - [ ] 상태 관리 라이브러리 리덕스 이용하기 - [ ] 타입스크립트 이용하기",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hyunju-it/goorm-react-note.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Hyunju-it/goorm-react-note/issues"
+  },
+  "homepage": "https://github.com/Hyunju-it/goorm-react-note#readme",
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.9.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-redux": "^9.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "@types/uuid": "^10.0.0",
+    "@vitejs/plugin-react": "^5.0.2",
+    "typescript": "^5.9.2",
+    "uuid": "^13.0.0",
+    "vite": "^7.1.5"
+  }
+}
