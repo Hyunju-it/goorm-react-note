@@ -3,25 +3,19 @@ export interface Note {
   title: string;
   content: string;
   tags: string[];
-  priority: 'High' | 'Medium' | 'Low';
   backgroundColor: string;
+  priority: 'Low' | 'Medium' | 'High';
   createdAt: string;
   updatedAt: string;
+  isPinned: boolean;
 }
 
-export interface NotesState {
+export interface NoteState {
   notes: Note[];
-  activeNoteId: string | null;
+  selectedNoteId: string | null;
+  isEditorOpen: boolean;
+  tagList: string[];
 }
 
-export type Priority = 'High' | 'Medium' | 'Low';
-export type BackgroundColor = 'White' | 'Yellow' | 'Pink' | 'Blue' | 'Green';
-
-export interface FormatState {
-  bold: boolean;
-  italic: boolean;
-  underline: boolean;
-  strikethrough: boolean;
-  color: string;
-  fontSize: string;
-}
+export type Priority = 'Low' | 'Medium' | 'High';
+export type BackgroundColor = 'White' | 'Red' | 'Green' | 'Blue' | 'Yellow' | 'Pink';

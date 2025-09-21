@@ -3,8 +3,8 @@ import notesReducer from './notesSlice';
 
 export const store = configureStore({
   reducer: {
-    notes: notesReducer,
-  },
+    notes: notesReducer
+  }
 });
 
 export type RootState = ReturnType<typeof store.getState>;

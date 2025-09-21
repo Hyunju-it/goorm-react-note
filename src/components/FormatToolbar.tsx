@@ -1,91 +1,103 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 interface FormatToolbarProps {
   onFormat: (command: string, value?: string) => void;
 }
 
 const FormatToolbar: React.FC<FormatToolbarProps> = ({ onFormat }) => {
-  const [showColorPicker, setShowColorPicker] = useState(false);
-  const [showFontSizePicker, setShowFontSizePicker] = useState(false);
-
-  const colors = ['#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF'];
-  const fontSizes = ['12px', '14px', '16px', '18px', '20px', '24px', '28px', '32px'];
+  const handleFormatClick = (command: string, value?: string) => {
+    onFormat(command, value);
+  };
 
   return (
     <div className="format-toolbar">
-      <button onClick={() => onFormat('insertUnorderedList')} title="불릿 목록">
+      <button
+        type="button"
+        className="format-btn"
+        onClick={() => handleFormatClick('insertUnorderedList')}
+        title="불릿 목록"
+      >
+        ☰
+      </button>
+
+      <button
+        type="button"
+        className="format-btn"
+        onClick={() => handleFormatClick('insertOrderedList')}
+        title="번호 목록"
+      >
         ≡
       </button>
-      <button onClick={() => onFormat('insertOrderedList')} title="번호 목록">
-        ≡
+
+      <button
+        type="button"
+        className="format-btn"
+        onClick={() => handleFormatClick('italic')}
+        title="기울임"
+      >
+        <i>I</i>
       </button>
-      <button onClick={() => onFormat('bold')} title="굵게">
-        <strong>I</strong>
+
+      <button
+        type="button"
+        className="format-btn"
+        onClick={() => handleFormatClick('underline')}
+        title="밑줄"
+      >
+        <u>U</u>
       </button>
-      <button onClick={() => onFormat('italic')} title="기울임">
-        <em>U</em>
-      </button>
-      <button onClick={() => onFormat('underline')} title="밑줄">
+
+      <button
+        type="button"
+        className="format-btn"
+        onClick={() => handleFormatClick('strikeThrough')}
+        title="취소선"
+      >
         <s>S</s>
       </button>
 
-      <div className="color-picker-wrapper">
-        <button
-          onClick={() => setShowColorPicker(!showColorPicker)}
-          title="글자 색"
-          className="color-btn"
-        >
-          A
-        </button>
-        {showColorPicker && (
-          <div className="color-palette">
-            {colors.map(color => (
-              <button
-                key={color}
-                className="color-option"
-                style={{ backgroundColor: color }}
-                onClick={() => {
-                  onFormat('foreColor', color);
-                  setShowColorPicker(false);
-                }}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="font-size-wrapper">
-        <button
-          onClick={() => setShowFontSizePicker(!showFontSizePicker)}
-          title="글자 크기"
-          className="font-size-btn"
-        >
-          A±
-        </button>
-        {showFontSizePicker && (
-          <div className="font-size-options">
-            {fontSizes.map(size => (
-              <button
-                key={size}
-                onClick={() => {
-                  onFormat('fontSize', size);
-                  setShowFontSizePicker(false);
-                }}
-              >
-                {size}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <button onClick={() => onFormat('insertHTML', '<blockquote></blockquote>')} title="이미지">
-        📷
+      <button
+        type="button"
+        className="format-btn"
+        onClick={() => handleFormatClick('foreColor', '#ff0000')}
+        title="글자 색상"
+      >
+        A
       </button>
-      <button onClick={() => onFormat('insertHTML', '<blockquote></blockquote>')} title="인용">
-        ""
+
+      <button
+        type="button"
+        className="format-btn"
+        onClick={() => handleFormatClick('fontSize', '4')}
+        title="글자 크기"
+      >
+        🄰
       </button>
-      <button onClick={() => onFormat('insertHTML', '<code></code>')} title="코드">
+
+      <button
+        type="button"
+        className="format-btn"
+        onClick={() => handleFormatClick('insertImage')}
+        title="이미지"
+      >
+        🖼
+      </button>
+
+      <button
+        type="button"
+        className="format-btn"
+        onClick={() => handleFormatClick('formatBlock', 'blockquote')}
+        title="인용문"
+      >
+        ❝❞
+      </button>
+
+      <button
+        type="button"
+        className="format-btn"
+        onClick={() => handleFormatClick('formatBlock', 'pre')}
+        title="코드 블록"
+      >
         &lt;/&gt;
       </button>
     </div>

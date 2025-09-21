@@ -1,105 +1,90 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Note, NoteState } from '../types';
 import { v4 as uuidv4 } from 'uuid';
-import { Note, NotesState, Priority, BackgroundColor } from '../types';
 
-const defaultNoteId = uuidv4();
-
-const initialState: NotesState = {
-  notes: [{
-    id: defaultNoteId,
-    title: '제목...',
-    content: '',
-    tags: [],
-    priority: 'Low',
-    backgroundColor: 'White',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  }],
-  activeNoteId: defaultNoteId,
+const initialState: NoteState = {
+  notes: [],
+  selectedNoteId: null,
+  isEditorOpen: false,
+  tagList: ['Coding', 'Exercise', 'Quotes']
 };
 
 const notesSlice = createSlice({
   name: 'notes',
   initialState,
   reducers: {
-    createNote: (state) => {
+    addNote: (state, action: PayloadAction<Omit<Note, 'id' | 'createdAt' | 'updatedAt'>>) => {
       const newNote: Note = {
+        ...action.payload,
         id: uuidv4(),
-        title: '제목...',
-        content: '',
-        tags: [],
-        priority: 'Low',
-        backgroundColor: 'White',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: new Date().toLocaleString(),
+        updatedAt: new Date().toLocaleString()
       };
       state.notes.push(newNote);
-      state.activeNoteId = newNote.id;
     },
-    updateNoteTitle: (state, action: PayloadAction<{ id: string; title: string }>) => {
-      const note = state.notes.find(n => n.id === action.payload.id);
-      if (note) {
-        note.title = action.payload.title;
-        note.updatedAt = new Date().toISOString();
+
+    updateNote: (state, action: PayloadAction<Note>) => {
+      const index = state.notes.findIndex(note => note.id === action.payload.id);
+      if (index !== -1) {
+        state.notes[index] = {
+          ...action.payload,
+          updatedAt: new Date().toLocaleString()
+        };
       }
     },
-    updateNoteContent: (state, action: PayloadAction<{ id: string; content: string }>) => {
-      const note = state.notes.find(n => n.id === action.payload.id);
-      if (note) {
-        note.content = action.payload.content;
-        note.updatedAt = new Date().toISOString();
-      }
-    },
-    updateNotePriority: (state, action: PayloadAction<{ id: string; priority: Priority }>) => {
-      const note = state.notes.find(n => n.id === action.payload.id);
-      if (note) {
-        note.priority = action.payload.priority;
-        note.updatedAt = new Date().toISOString();
-      }
-    },
-    updateNoteBackground: (state, action: PayloadAction<{ id: string; backgroundColor: BackgroundColor }>) => {
-      const note = state.notes.find(n => n.id === action.payload.id);
-      if (note) {
-        note.backgroundColor = action.payload.backgroundColor;
-        note.updatedAt = new Date().toISOString();
-      }
-    },
-    addTag: (state, action: PayloadAction<{ id: string; tag: string }>) => {
-      const note = state.notes.find(n => n.id === action.payload.id);
-      if (note && !note.tags.includes(action.payload.tag)) {
-        note.tags.push(action.payload.tag);
-        note.updatedAt = new Date().toISOString();
-      }
-    },
-    removeTag: (state, action: PayloadAction<{ id: string; tag: string }>) => {
-      const note = state.notes.find(n => n.id === action.payload.id);
-      if (note) {
-        note.tags = note.tags.filter(tag => tag !== action.payload.tag);
-        note.updatedAt = new Date().toISOString();
-      }
-    },
-    setActiveNote: (state, action: PayloadAction<string>) => {
-      state.activeNoteId = action.payload;
-    },
+
     deleteNote: (state, action: PayloadAction<string>) => {
       state.notes = state.notes.filter(note => note.id !== action.payload);
-      if (state.activeNoteId === action.payload) {
-        state.activeNoteId = state.notes.length > 0 ? state.notes[0].id : null;
+      if (state.selectedNoteId === action.payload) {
+        state.selectedNoteId = null;
+        state.isEditorOpen = false;
       }
     },
-  },
+
+    selectNote: (state, action: PayloadAction<string | null>) => {
+      state.selectedNoteId = action.payload;
+    },
+
+    openEditor: (state, action: PayloadAction<string | null>) => {
+      state.isEditorOpen = true;
+      state.selectedNoteId = action.payload;
+    },
+
+    closeEditor: (state) => {
+      state.isEditorOpen = false;
+      state.selectedNoteId = null;
+    },
+
+    togglePinNote: (state, action: PayloadAction<string>) => {
+      const note = state.notes.find(note => note.id === action.payload);
+      if (note) {
+        note.isPinned = !note.isPinned;
+        note.updatedAt = new Date().toLocaleString();
+      }
+    },
+
+    addTag: (state, action: PayloadAction<string>) => {
+      if (!state.tagList.includes(action.payload)) {
+        state.tagList.push(action.payload);
+      }
+    },
+
+    removeTag: (state, action: PayloadAction<string>) => {
+      state.tagList = state.tagList.filter(tag => tag !== action.payload);
+    }
+  }
 });
 
 export const {
-  createNote,
-  updateNoteTitle,
-  updateNoteContent,
-  updateNotePriority,
-  updateNoteBackground,
-  addTag,
-  removeTag,
-  setActiveNote,
+  addNote,
+  updateNote,
   deleteNote,
+  selectNote,
+  openEditor,
+  closeEditor,
+  togglePinNote,
+  addTag,
+  removeTag
 } = notesSlice.actions;
 
 export default notesSlice.reducer;
