@@ -6,19 +6,21 @@ const initialState: NoteState = {
   notes: [],
   selectedNoteId: null,
   isEditorOpen: false,
-  tagList: ['Coding', 'Exercise', 'Quotes']
+  tagList: ['Coding', 'Exercise', 'Quotes'],
+  selectedTag: 'Notes'
 };
 
 const notesSlice = createSlice({
   name: 'notes',
   initialState,
   reducers: {
-    addNote: (state, action: PayloadAction<Omit<Note, 'id' | 'createdAt' | 'updatedAt'>>) => {
+    addNote: (state, action: PayloadAction<Omit<Note, 'id' | 'createdAt' | 'updatedAt' | 'status'>>) => {
       const newNote: Note = {
         ...action.payload,
         id: uuidv4(),
         createdAt: new Date().toLocaleString(),
-        updatedAt: new Date().toLocaleString()
+        updatedAt: new Date().toLocaleString(),
+        status: 'active'
       };
       state.notes.push(newNote);
     },
@@ -33,7 +35,35 @@ const notesSlice = createSlice({
       }
     },
 
-    deleteNote: (state, action: PayloadAction<string>) => {
+    moveToTrash: (state, action: PayloadAction<string>) => {
+      const note = state.notes.find(note => note.id === action.payload);
+      if (note) {
+        note.status = 'trash';
+        note.updatedAt = new Date().toLocaleString();
+      }
+      if (state.selectedNoteId === action.payload) {
+        state.selectedNoteId = null;
+        state.isEditorOpen = false;
+      }
+    },
+
+    archiveNote: (state, action: PayloadAction<string>) => {
+      const note = state.notes.find(note => note.id === action.payload);
+      if (note) {
+        note.status = 'archived';
+        note.updatedAt = new Date().toLocaleString();
+      }
+    },
+
+    restoreNote: (state, action: PayloadAction<string>) => {
+      const note = state.notes.find(note => note.id === action.payload);
+      if (note) {
+        note.status = 'active';
+        note.updatedAt = new Date().toLocaleString();
+      }
+    },
+
+    deleteNotePermanently: (state, action: PayloadAction<string>) => {
       state.notes = state.notes.filter(note => note.id !== action.payload);
       if (state.selectedNoteId === action.payload) {
         state.selectedNoteId = null;
@@ -71,6 +101,10 @@ const notesSlice = createSlice({
 
     removeTag: (state, action: PayloadAction<string>) => {
       state.tagList = state.tagList.filter(tag => tag !== action.payload);
+    },
+
+    setSelectedTag: (state, action: PayloadAction<string>) => {
+      state.selectedTag = action.payload;
     }
   }
 });
@@ -78,13 +112,17 @@ const notesSlice = createSlice({
 export const {
   addNote,
   updateNote,
-  deleteNote,
+  moveToTrash,
+  archiveNote,
+  restoreNote,
+  deleteNotePermanently,
   selectNote,
   openEditor,
   closeEditor,
   togglePinNote,
   addTag,
-  removeTag
+  removeTag,
+  setSelectedTag
 } = notesSlice.actions;
 
 export default notesSlice.reducer;

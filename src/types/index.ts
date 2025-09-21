@@ -8,6 +8,7 @@ export interface Note {
   createdAt: string;
   updatedAt: string;
   isPinned: boolean;
+  status: 'active' | 'archived' | 'trash';
 }
 
 export interface NoteState {
@@ -15,6 +16,7 @@ export interface NoteState {
   selectedNoteId: string | null;
   isEditorOpen: boolean;
   tagList: string[];
+  selectedTag: string;
 }
 
 export type Priority = 'Low' | 'Medium' | 'High';

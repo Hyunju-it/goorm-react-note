@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { openEditor, deleteNote, togglePinNote } from '../store/notesSlice';
+import { openEditor, moveToTrash, archiveNote, restoreNote, deleteNotePermanently, togglePinNote } from '../store/notesSlice';
 import { Note } from '../types';
 
 interface SortModalProps {
@@ -91,7 +91,7 @@ const SortModal: React.FC<SortModalProps> = ({ isOpen, onClose, onSortChange, cu
 
 const MainContent: React.FC = () => {
   const dispatch = useDispatch();
-  const { notes } = useSelector((state: RootState) => state.notes);
+  const { notes, selectedTag } = useSelector((state: RootState) => state.notes);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortType, setSortType] = useState('latest');
   const [isSortModalOpen, setIsSortModalOpen] = useState(false);
@@ -101,7 +101,22 @@ const MainContent: React.FC = () => {
       note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       note.content.toLowerCase().includes(searchTerm.toLowerCase());
 
-    return matchesSearch;
+    // 상태별 필터링
+    let matchesStatus = false;
+    if (selectedTag === 'Notes') {
+      matchesStatus = note.status === 'active';
+    } else if (selectedTag === 'Archive') {
+      matchesStatus = note.status === 'archived';
+    } else if (selectedTag === 'Trash') {
+      matchesStatus = note.status === 'trash';
+    } else if (selectedTag === 'Edit Notes') {
+      matchesStatus = note.status === 'active'; // Edit Notes는 active 노트만
+    } else {
+      // 특정 태그 선택시
+      matchesStatus = note.status === 'active' && note.tags.includes(selectedTag);
+    }
+
+    return matchesSearch && matchesStatus;
   });
 
   const sortedNotes = [...filteredNotes].sort((a, b) => {
@@ -136,7 +151,30 @@ const MainContent: React.FC = () => {
 
   const handleDeleteNote = (noteId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    dispatch(deleteNote(noteId));
+    const note = notes.find(n => n.id === noteId);
+    if (note) {
+      if (note.status === 'trash') {
+        // 이미 휴지통에 있는 경우 영구 삭제
+        dispatch(deleteNotePermanently(noteId));
+      } else {
+        // 휴지통으로 이동
+        dispatch(moveToTrash(noteId));
+      }
+    }
+  };
+
+  const handleArchiveNote = (noteId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const note = notes.find(n => n.id === noteId);
+    if (note) {
+      if (note.status === 'archived') {
+        // 이미 아카이브된 경우 복원
+        dispatch(restoreNote(noteId));
+      } else {
+        // 아카이브로 이동
+        dispatch(archiveNote(noteId));
+      }
+    }
   };
 
   const handlePinNote = (noteId: string, e: React.MouseEvent) => {
@@ -188,12 +226,23 @@ const MainContent: React.FC = () => {
           <button
             className="action-btn"
             onClick={(e) => handleEditNote(note.id, e)}
+            title="편집"
           >
             ✏️
           </button>
+          {note.status !== 'trash' && (
+            <button
+              className="action-btn"
+              onClick={(e) => handleArchiveNote(note.id, e)}
+              title={note.status === 'archived' ? '복원' : '아카이브'}
+            >
+              📦
+            </button>
+          )}
           <button
             className="action-btn"
             onClick={(e) => handleDeleteNote(note.id, e)}
+            title={note.status === 'trash' ? '영구 삭제' : '휴지통으로 이동'}
           >
             🗑️
           </button>
