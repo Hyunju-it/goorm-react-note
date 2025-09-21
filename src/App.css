@@ -62,8 +62,8 @@ body {
   font-weight: 500;
 }
 
-/* Sidebar Content */
-.sidebar-content {
+/* Main Content */
+.main-content {
   flex: 1;
   background-color: #f8f9fa;
   padding: 20px;
@@ -100,6 +100,118 @@ body {
 
 .add-note-btn:hover {
   background-color: #ffb300;
+}
+
+/* Sort Modal */
+.sort-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+}
+
+.sort-modal {
+  background-color: white;
+  border-radius: 8px;
+  width: 300px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  padding: 0;
+}
+
+.sort-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  position: relative;
+}
+
+.sort-modal-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.clear-btn {
+  background: none;
+  border: none;
+  color: #ffc107;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  position: absolute;
+  right: 50px;
+}
+
+.clear-btn:hover {
+  text-decoration: underline;
+}
+
+.sort-section {
+  padding: 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.sort-section:last-child {
+  border-bottom: none;
+}
+
+.sort-section h4 {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  margin: 0 0 15px 0;
+  letter-spacing: 0.5px;
+}
+
+.sort-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sort-options label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+}
+
+.sort-options input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  appearance: none;
+  cursor: pointer;
+  position: relative;
+}
+
+.sort-options input[type="radio"]:checked {
+  border-color: #007bff;
+  background-color: #007bff;
+}
+
+.sort-options input[type="radio"]:checked::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .search-container {
@@ -593,6 +705,10 @@ body {
     max-height: 40vh;
   }
 
+  .main-content {
+    padding: 10px;
+  }
+
   .notes-grid {
     grid-template-columns: 1fr;
   }
@@ -609,6 +725,11 @@ body {
 
   .select-group {
     justify-content: space-between;
+  }
+
+  .sort-modal {
+    width: 95%;
+    margin: 10px;
   }
 }
 
@@ -629,4 +750,10 @@ body {
     width: 95%;
     margin: 10px;
   }
+}
+
+.format-btn.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
 }
